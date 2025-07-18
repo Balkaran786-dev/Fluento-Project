@@ -14,6 +14,7 @@ import { getLanguageFlag } from "../components/FriendCard";
 const HomePage = () => {
   const queryClient = useQueryClient();
   const [outgoingRequestsIds, setOutgoingRequestsIds] = useState(new Set());
+  const [loadingUserId, setLoadingUserId] = useState(null);
 
   const { data: recommendedUsers = [], isLoading: loadingUsers } = useQuery({
     queryKey: ["users"],
@@ -25,9 +26,18 @@ const HomePage = () => {
     queryFn: getOutgoingFriendReqs,
   });
 
-  const { mutate: sendRequestMutation, isPending } = useMutation({
+  const { mutate: sendRequestMutation } = useMutation({
     mutationFn: sendFriendRequest,
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["outgoingFriendReqs"] }),
+    onMutate: (userId) => {
+      setLoadingUserId(userId);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["outgoingFriendReqs"] });
+      setLoadingUserId(null);
+    },
+    onError: () => {
+      setLoadingUserId(null);
+    },
   });
 
   useEffect(() => {
@@ -113,12 +123,17 @@ const HomePage = () => {
                           hasRequestBeenSent ? "btn-disabled" : "btn-primary"
                         } `}
                         onClick={() => sendRequestMutation(user._id)}
-                        disabled={hasRequestBeenSent || isPending}
+                        disabled={hasRequestBeenSent || loadingUserId === user._id}
                       >
                         {hasRequestBeenSent ? (
                           <>
                             <CheckCircleIcon className="size-4 mr-2" />
                             Request Sent
+                          </>
+                        ) : loadingUserId === user._id ? (
+                          <>
+                            <span className="loading loading-spinner loading-xs mr-2"></span>
+                            Sending...
                           </>
                         ) : (
                           <>

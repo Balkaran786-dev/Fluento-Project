@@ -1,21 +1,30 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
 import { acceptFriendRequest, getFriendRequests } from "../lib/api";
 import { BellIcon, ClockIcon, MessageSquareIcon, UserCheckIcon } from "lucide-react";
 import NoNotificationsFound from "../components/NoNotificationsFound";
 
 const NotificationsPage = () => {
   const queryClient = useQueryClient();
+  const [loadingRequestId, setLoadingRequestId] = useState(null);
 
   const { data: friendRequests, isLoading } = useQuery({
     queryKey: ["friendRequests"],
     queryFn: getFriendRequests,
   });
 
-  const { mutate: acceptRequestMutation, isPending } = useMutation({
+  const { mutate: acceptRequestMutation } = useMutation({
     mutationFn: acceptFriendRequest,
+    onMutate: (requestId) => {
+      setLoadingRequestId(requestId);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["friendRequests"] });
       queryClient.invalidateQueries({ queryKey: ["friends"] });
+      setLoadingRequestId(null);
+    },
+    onError: () => {
+      setLoadingRequestId(null);
     },
   });
 
@@ -69,9 +78,16 @@ const NotificationsPage = () => {
                           <button
                             className="btn btn-primary btn-sm"
                             onClick={() => acceptRequestMutation(request._id)}
-                            disabled={isPending}
+                            disabled={loadingRequestId === request._id}
                           >
-                            Accept
+                            {loadingRequestId === request._id ? (
+                              <>
+                                <span className="loading loading-spinner loading-xs"></span>
+                                Accepting...
+                              </>
+                            ) : (
+                              "Accept"
+                            )}
                           </button>
                         </div>
                       </div>
