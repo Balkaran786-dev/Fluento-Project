@@ -38,11 +38,40 @@ const OnboardingPage = () => {
   };
 
   const handleRandomAvatar = () => {
-    const idx = Math.floor(Math.random() * 100) + 1; // 1-100 included
-    const randomAvatar = `https://avatar.iran.liara.run/public/${idx}.png`;
+    try {
+      // Generate random seed for human-like avatars
+      const randomSeed = Math.random().toString(36).substring(2, 10);
 
-    setFormState({ ...formState, profilePic: randomAvatar });
-    toast.success("Random profile picture generated!");
+      // Use human-like avatar services
+      const avatarOptions = [
+        // DiceBear Avataaars - Sketch-style human avatars (like Slack/Discord)
+        `https://api.dicebear.com/7.x/avataaars/png?seed=${randomSeed}&size=200`,
+        `https://api.dicebear.com/7.x/avataaars/svg?seed=${randomSeed}&size=200`,
+        // DiceBear Big Smile - Happy human faces
+        `https://api.dicebear.com/7.x/big-smile/png?seed=${randomSeed}&size=200`,
+        `https://api.dicebear.com/7.x/big-smile/svg?seed=${randomSeed}&size=200`,
+        // DiceBear Adventurer - Human adventure characters
+        `https://api.dicebear.com/7.x/adventurer/png?seed=${randomSeed}&size=200`,
+        `https://api.dicebear.com/7.x/adventurer/svg?seed=${randomSeed}&size=200`,
+        // DiceBear Lorelei - Female human avatars
+        `https://api.dicebear.com/7.x/lorelei/png?seed=${randomSeed}&size=200`,
+        // DiceBear Micah - Male human avatars
+        `https://api.dicebear.com/7.x/micah/png?seed=${randomSeed}&size=200`,
+        // DiceBear Open Peeps - Colorful human illustrations
+        `https://api.dicebear.com/7.x/open-peeps/png?seed=${randomSeed}&size=200`,
+        // DiceBear Personas - Professional human avatars
+        `https://api.dicebear.com/7.x/personas/png?seed=${randomSeed}&size=200`,
+      ];
+
+      const randomAvatar = avatarOptions[Math.floor(Math.random() * avatarOptions.length)];
+      console.log("🎨 Generated human avatar URL:", randomAvatar);
+
+      setFormState(prevState => ({ ...prevState, profilePic: randomAvatar }));
+      toast.success("Random human avatar generated!");
+    } catch (error) {
+      console.error("❌ Error generating random avatar:", error);
+      toast.error("Failed to generate avatar. Please try again.");
+    }
   };
 
   return (
