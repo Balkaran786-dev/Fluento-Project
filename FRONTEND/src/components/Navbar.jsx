@@ -1,10 +1,10 @@
 import { Link, useLocation } from "react-router";
 import useAuthUser from "../hooks/useAuthUser";
-import { BellIcon, LogOutIcon, ShipWheelIcon } from "lucide-react";
+import { BellIcon, LogOutIcon, ShipWheelIcon, MenuIcon } from "lucide-react";
 import ThemeSelector from "./ThemeSelector";
 import useLogout from "../hooks/useLogout";
 
-const Navbar = () => {
+const Navbar = ({ showSidebar = false, onToggleMobileSidebar = () => {} }) => {
   const { authUser } = useAuthUser();
   const location = useLocation();
   const isChatPage = location.pathname?.startsWith("/chat");
@@ -20,7 +20,17 @@ const Navbar = () => {
   return (
     <nav className="bg-base-200 border-b border-base-300 sticky top-0 z-30 h-16 flex items-center">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-end w-full">
+        <div className="flex items-center justify-between w-full">
+          {/* Mobile hamburger menu button - only show when sidebar is enabled and on mobile */}
+          {showSidebar && (
+            <button
+              className="btn btn-ghost btn-circle lg:hidden"
+              onClick={onToggleMobileSidebar}
+            >
+              <MenuIcon className="size-6" />
+            </button>
+          )}
+
           {/* LOGO - ONLY IN THE CHAT PAGE */}
           {isChatPage && (
             <div className="pl-5">
