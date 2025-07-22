@@ -9,6 +9,9 @@ const Navbar = ({ showSidebar = false, onToggleMobileSidebar = () => {} }) => {
   const location = useLocation();
   const isChatPage = location.pathname?.startsWith("/chat");
 
+  // Debug logging
+  console.log("Navbar - showSidebar:", showSidebar, "isChatPage:", isChatPage);
+
   // const queryClient = useQueryClient();
   // const { mutate: logoutMutation } = useMutation({
   //   mutationFn: logout,
@@ -21,15 +24,14 @@ const Navbar = ({ showSidebar = false, onToggleMobileSidebar = () => {} }) => {
     <nav className="bg-base-200 border-b border-base-300 sticky top-0 z-30 h-16 flex items-center">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between w-full">
-          {/* Mobile hamburger menu button - only show when sidebar is enabled and on mobile */}
-          {showSidebar && (
-            <button
-              className="btn btn-ghost btn-circle lg:hidden"
-              onClick={onToggleMobileSidebar}
-            >
-              <MenuIcon className="size-6" />
-            </button>
-          )}
+          {/* Mobile hamburger menu button - show on mobile when sidebar is enabled */}
+          <button
+            className="btn btn-outline btn-sm lg:hidden flex items-center justify-center"
+            onClick={onToggleMobileSidebar}
+            title="Open Menu"
+          >
+            <MenuIcon className="size-5" />
+          </button>
 
           {/* LOGO - ONLY IN THE CHAT PAGE */}
           {isChatPage && (

@@ -120,7 +120,11 @@ const HomePage = () => {
                       {/* Action button */}
                       <button
                         className={`btn w-full mt-2 ${
-                          hasRequestBeenSent ? "btn-disabled" : "btn-primary"
+                          hasRequestBeenSent
+                            ? "btn-success btn-disabled"
+                            : loadingUserId === user._id
+                            ? "btn-primary loading"
+                            : "btn-primary"
                         } `}
                         onClick={() => sendRequestMutation(user._id)}
                         disabled={hasRequestBeenSent || loadingUserId === user._id}
